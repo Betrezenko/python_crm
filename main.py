@@ -1,44 +1,73 @@
-from student import Student
+import random
+
+from People.student import Student
 from subject import Subject
-from teacher import Teacher
+from People.teacher import Teacher
 from studentGroup import StudentGroup
-from ticket import Ticket
 from exam import Exam
+from faker import Faker
 
+fake_name = Faker()
+group_list = []
+teachers_list = []
 math = Subject("Math")
-mathTeacher = Teacher('Andrew', 34, 'M')
-mathTeacher.add_subject(math)
-math.show_teacher()
-
 physics = Subject("Physics")
-physicsTeacher = Teacher('Margaret', 54, 'F')
-physicsTeacher.add_subject(physics)
-
 literature = Subject('Literature')
-literatureTeacher = Teacher('John', 35, 'M')
+subjects = [math, physics, literature]
+
+def generate_teacher():
+    teacher = Teacher(
+        fake_name.first_name(),
+        random.randint(18, 30),
+        random.choice(['M', 'F'])
+    )
+
+    teachers_list.append(teacher)
+    teacher.add_subject(random.choice(subjects))
+
+    return teacher
+
+def generate_groups(count):
+    if count > 0:
+        for i in range(count):
+            group = StudentGroup(f'Group {i + 1}')
+            group_list.append(group)
+    else:
+        print('Enter correct counter to generate groups.')
+
+def generate_student():
+    student = Student(
+        fake_name.first_name(),
+        random.randint(18, 30),
+        random.choice(['M', 'F'])
+    )
+
+    student.add_to_group(random.choice(group_list))
+
+    return student
+
+generate_groups(3)
+for _ in range(30):
+    generate_student()
+
 print()
 
-student1 = Student('Alice',  18, 'F')
-student2 = Student('Bob', 20, 'M')
-# student1.add_money(10)
-# student1.add_money(20)
-# student1.rm_money(40)
-# student1.show_balance()
-# print()
-student1.add_subject(math)
-student1.add_subject(physics)
-student1.add_subject(literature)
-student1.show_subjects()
+for _ in range(3):
+    generate_teacher()
+
 print()
 
-group1 = StudentGroup('Group 1')
-group1.add_student(student1)
-group1.add_student(student2)
-student1.show_group()
+group1 = group_list[0]
 group1.show_students()
-print()
 
-exam1 = Exam(group1, math, mathTeacher)
-exam1.start_exam()
+mathTeacher = teachers_list[0]
+physicsTeacher = teachers_list[1]
+literatureTeacher = teachers_list[2]
 
+mathExam = Exam(group_list[0], subjects[0], mathTeacher)
+physicsExam = Exam(group_list[1], subjects[1], physicsTeacher)
+literatureExam = Exam(group_list[0], subjects[2], literatureTeacher)
 
+mathExam.start_exam()
+physicsExam.start_exam()
+literatureExam.start_exam()
