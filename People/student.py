@@ -1,4 +1,6 @@
-from human import Human
+from People.human import Human
+from studentGroup import StudentGroup
+from exceptions import StudentAlreadyInGroupError
 
 
 class Student(Human):
@@ -13,7 +15,7 @@ class Student(Human):
         self.group = None
 
     def __str__(self):
-        group_name = self.group or f"{self.name} not in group"
+        group_name = self.group.group_name or f"{self.name} not in group"
         return f"{group_name} : {self.name}"
 
     def add_subject(self, subject):
@@ -32,9 +34,16 @@ class Student(Human):
             for subject in self.subjects:
                 print(subject)
 
-    def add_to_group(self, group_name):
-        self.group = group_name
-        print(f"{self.name} was added to {group_name}.")
+    def add_to_group(self, group):
+        if not isinstance(group, StudentGroup):
+            raise TypeError(f"{group} should be a StudentGroup object.")
+        self.group = group
+        if len(group) < group.limit:
+            if self not in group.students_set:
+                group.students_set.add(self)
+                print(f"{self.name} was added to {group}.")
+            else:
+                raise StudentAlreadyInGroupError(group.group_name, self)
 
     def show_group(self):
         if self.group is not None:

@@ -2,21 +2,27 @@ from exceptions import ReachedGroupLimitError
 from exceptions import StudentAlreadyInGroupError
 
 class StudentGroup:
-    def __init__(self, group_name, limit=10):
+    DEFAULT_LIMIT = 10
+
+    def __init__(self, group_name):
         self.group_name = group_name
-        self.limit = limit
         self.students_set = set()
+        self.limit = StudentGroup.DEFAULT_LIMIT
 
     def __str__(self):
         return self.group_name
 
-    # Выглядит топорно, но я не придумал как сделать две проверки иначе
-    # Видос из задания как-будто не совсем сюда подходит, либо я не понял как его использовать в этом случае
+    def __len__(self):
+        counter = 0
+        for i in self.students_set:
+            counter += 1
+        return counter
+
     def add_student(self, student):
-        if len(self.students_set) < self.limit:
+        if len(self) < self.limit:
             if student not in self.students_set:
                 self.students_set.add(student)
-                student.add_to_group(self.group_name)
+                student.add_to_group(self)
             else:
                 raise StudentAlreadyInGroupError(self.group_name, student)
         else:

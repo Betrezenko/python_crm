@@ -1,15 +1,16 @@
-from human import Human
+from People.human import Human
 
 
 class Teacher(Human):
     STATUS = "teacher"
+    SALARY = 1000.0
 
     def __init__(self, name, age, sex):
         self.name = name
         self.age = age
         self.sex = sex
         self.subj_teacher = None
-        self.salary = 1000.0
+        self.salary = Teacher.SALARY
 
     def __str__(self):
         return self.name
